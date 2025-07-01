@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanapol Digital Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.84); justify-content: center; align-items: center; }
+    .modal-content { background-color: #fff; padding: 24px; border-radius: 16px; text-align: center;
+      max-width: 300px; width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+    .modal.active { display: flex; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 bg-gray-800">
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-lg overflow-hidden">
+
+    <!-- Header สีเทา -->
+    <div class="relative h-44 bg-gray-400 flex flex-col items-center justify-center">
+      <img src="logo-Photoroom (1).png" alt="OPT Logo" class="h-12 md:h-14 object-contain mb-2" />
+      <div class="absolute bottom-[-70px]">
+        <img src="S__74268691.jpg" alt="Profile Picture"
+          class="rounded-full border-8 border-white shadow-md w-32 h-32 object-cover" />
+      </div>
+    </div>
+
+    <!-- เนื้อหาหลัก -->
+    <div class="p-6 text-center pt-20">
+      <h1 class="text-3xl font-bold text-gray-800">Thanapol Rujjiradthitikan</h1>
+      <p class="text-gray-600 mt-1">Sales Engineer / OPT Machine Vision</p>
+      <p class="text-gray-500 mt-4 text-sm max-w-xs mx-auto">
+        Supporting machine vision solutions and lighting setup for global customers.
+      </p>
+
+      <!-- ปุ่ม -->
+      <div class="mt-6 flex justify-center gap-4">
+        <button id="saveContactBtn" class="bg-blue-600 text-white py-3 px-6 rounded-full shadow hover:bg-blue-700 transition">
+          <i class="fas fa-save mr-2"></i> Save Data
+        </button>
+        <button id="showQrBtn" class="bg-gray-200 text-gray-800 py-3 px-6 rounded-full shadow hover:bg-gray-300 transition">
+          <i class="fas fa-qrcode mr-2"></i> QR Code
+        </button>
+      </div>
+
+      <!-- ลิงก์ติดต่อ -->
+      <div id="linksContainer" class="mt-8 space-y-4">
+        <a href="tel:064-206-2726" target="_blank"
+          class="flex items-center justify-between p-4 rounded-xl bg-green-600 text-white shadow hover:scale-105 transition">
+          <i class="fas fa-phone text-2xl"></i><span>Tel.No.</span><i class="fas fa-chevron-right"></i>
+        </a>
+        <a href="mailto:Thanapol.r@optmv.com" target="_blank"
+          class="flex items-center justify-between p-4 rounded-xl bg-red-500 text-white shadow hover:scale-105 transition">
+          <i class="fas fa-envelope text-2xl"></i><span>Email</span><i class="fas fa-chevron-right"></i>
+        </a>
+        <a href="https://line.me/ti/p/ABV4gE_Zne" target="_blank"
+          class="flex items-center justify-between p-4 rounded-xl bg-green-400 text-white shadow hover:scale-105 transition">
+          <i class="fab fa-line text-2xl"></i><span>Line</span><i class="fas fa-chevron-right"></i>
+        </a>
+        <a href="https://www.optmv.net/" target="_blank"
+          class="flex items-center justify-between p-4 rounded-xl bg-blue-600 text-white shadow hover:scale-105 transition">
+          <i class="fas fa-globe text-2xl"></i><span>Website</span><i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-4 text-center">
+      <p class="text-xs text-gray-500">&copy; 2025 Thanapol Rujjiradthitikan. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="modal">
+    <div class="modal-content">
+      <h3 class="text-lg font-semibold mb-4">Scan</h3>
+      <div id="qrcode" class="mb-4"></div>
+      <input id="pageUrl" type="text" readonly class="w-full text-center bg-gray-100 rounded p-2 text-sm mb-4" />
+      <button id="closeModalBtn" class="bg-gray-700 text-white w-full py-2 rounded hover:bg-gray-800">ปิด</button>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    document.getElementById('saveContactBtn').addEventListener('click', () => {
+      const vCard = `BEGIN:VCARD
+VERSION:3.0
+N:Rujjiradthitikan;Thanapol
+FN:Thanapol Rujjiradthitikan
+TITLE:Sales Engineer
+ORG:OPT Machine Vision
+TEL;TYPE=CELL:064-206-2726
+EMAIL:Thanapol.r@optmv.com
+URL:https://www.optmv.net/
+PHOTO;TYPE=JPEG;VALUE=URL:S__74268691.jpg
+END:VCARD`;
+      const blob = new Blob([vCard], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Thanapol Rujjiradthitikan.vcf";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    const qrModal = document.getElementById('qrModal');
+    const qrCodeContainer = document.getElementById('qrcode');
+    let qrInstance = null;
+
+    document.getElementById('showQrBtn').addEventListener('click', () => {
+      const pageUrl = window.location.href;
+      document.getElementById('pageUrl').value = pageUrl;
+      if (!qrInstance) {
+        qrInstance = new QRCode(qrCodeContainer, {
+          text: pageUrl,
+          width: 200,
+          height: 200,
+          colorDark: "#000",
+          colorLight: "#fff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } else {
+        qrInstance.makeCode(pageUrl);
+      }
+      qrModal.classList.add('active');
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => qrModal.classList.remove('active'));
+    qrModal.addEventListener('click', e => { if (e.target === qrModal) qrModal.classList.remove('active'); });
+  </script>
+</body>
+</html>
